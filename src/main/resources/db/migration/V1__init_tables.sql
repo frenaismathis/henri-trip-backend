@@ -1,40 +1,96 @@
 -- V1__init_tables.sql
+-- Roles table
+CREATE TABLE role (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT UNIQUE NOT NULL
+);
 
--- Users table
+-- Mobility options
+CREATE TABLE mobility (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT UNIQUE NOT NULL
+);
+
+-- Seasons
+CREATE TABLE season (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT UNIQUE NOT NULL
+);
+
+-- Audiences
+CREATE TABLE audience (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT UNIQUE NOT NULL
+);
+
+-- Users
 CREATE TABLE app_user (
-    id BIGSERIAL PRIMARY KEY,
-    firstname VARCHAR(100) NOT NULL,
-    lastname VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    firstname TEXT NOT NULL,
+    lastname TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    role_id UUID REFERENCES role(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Guides table
+-- Guides
 CREATE TABLE guide (
-    id BIGSERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
     description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    days_count INT NOT NULL CHECK (days_count >= 1),
+    created_by UUID REFERENCES app_user(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Activities table
-CREATE TABLE activity (
-    id BIGSERIAL PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    guide_id BIGINT NOT NULL REFERENCES guide(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- Guide <-> mobility many-to-many
+CREATE TABLE guide_mobility (
+    guide_id UUID REFERENCES guide(id) ON DELETE CASCADE,
+    mobility_id UUID REFERENCES mobility(id) ON DELETE CASCADE,
+    PRIMARY KEY (guide_id, mobility_id)
 );
 
--- Pivot table for user ↔ guide access (Many-to-Many)
+-- Guide <-> season many-to-many
+CREATE TABLE guide_season (
+    guide_id UUID REFERENCES guide(id) ON DELETE CASCADE,
+    season_id UUID REFERENCES season(id) ON DELETE CASCADE,
+    PRIMARY KEY (guide_id, season_id)
+);
+
+-- Guide <-> audience many-to-many
+CREATE TABLE guide_audience (
+    guide_id UUID REFERENCES guide(id) ON DELETE CASCADE,
+    audience_id UUID REFERENCES audience(id) ON DELETE CASCADE,
+    PRIMARY KEY (guide_id, audience_id)
+);
+
+-- Guide <-> User many-to-many
 CREATE TABLE guide_user_access (
-    user_id BIGINT NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
-    guide_id BIGINT NOT NULL REFERENCES guide(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY(user_id, guide_id)
+    guide_id UUID REFERENCES guide(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES app_user(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (guide_id, user_id)
 );
+
+-- Activities
+CREATE TABLE activity (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    guide_id UUID REFERENCES guide(id) ON DELETE CASCADE,
+    day_number INT NOT NULL,
+    order_in_day INT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    category TEXT NOT NULL,
+    address TEXT NOT NULL,
+    phone TEXT,
+    opening_hours TEXT,
+    website TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_activity_guide_day_order ON activity(guide_id, day_number, order_in_day);

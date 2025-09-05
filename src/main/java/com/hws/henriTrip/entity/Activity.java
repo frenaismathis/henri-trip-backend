@@ -3,6 +3,7 @@ package com.hws.henriTrip.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "activity")
@@ -10,8 +11,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Activity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id
+    @GeneratedValue
+    private UUID id;
+
+    @ManyToOne
+    @JoinColumn(name = "guide_id", nullable = false)
+    private Guide guide;
+
+    @Column(nullable = false)
+    private int dayNumber;
+
+    @Column(nullable = false)
+    private int orderInDay;
 
     @Column(nullable = false)
     private String title;
@@ -19,9 +31,15 @@ public class Activity {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "guide_id", nullable = false)
-    private Guide guide;
+    @Column(nullable = false)
+    private String category;
+
+    @Column(nullable = false)
+    private String address;
+
+    private String phone;
+    private String openingHours;
+    private String website;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

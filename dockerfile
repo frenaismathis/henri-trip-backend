@@ -8,9 +8,6 @@ WORKDIR /app
 # Copy only pom.xml first to cache dependencies
 COPY pom.xml .
 
-# Pre-download dependencies
-# RUN mvn dependency:go-offline
-
 # Copy source code and build the jar
 COPY src ./src
 RUN mvn clean package -DskipTests
