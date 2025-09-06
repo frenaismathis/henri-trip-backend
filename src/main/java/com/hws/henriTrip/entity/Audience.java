@@ -1,8 +1,7 @@
-package com.hws.henriTrip.entity;
+package com.hws.henritrip.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity

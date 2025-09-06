@@ -1,4 +1,4 @@
-package com.hws.henriTrip.entity;
+package com.hws.henritrip.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

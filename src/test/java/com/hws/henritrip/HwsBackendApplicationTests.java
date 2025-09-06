@@ -1,4 +1,4 @@
-package com.hws.hwsbackend;
+package com.hws.henritrip;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
