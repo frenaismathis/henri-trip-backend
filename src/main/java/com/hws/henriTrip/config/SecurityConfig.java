@@ -1,29 +1,39 @@
-package com.hws.henriTrip.config;
+package com.hws.henritrip.config;
 
-import com.hws.henriTrip.security.JwtTokenFilter;
-import com.hws.henriTrip.security.JwtTokenProvider;
+import com.hws.henritrip.security.JwtTokenFilter;
+import com.hws.henritrip.security.JwtTokenProvider;
+import com.hws.henritrip.security.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+import com.hws.henritrip.security.CustomAccessDeniedHandler;
+import com.hws.henritrip.security.CustomAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableMethodSecurity
+public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final CustomUserDetailsService userDetailsService;
 
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider, CustomUserDetailsService userDetailsService) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.userDetailsService = userDetailsService;
     }
 
     @Bean
@@ -32,35 +42,44 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
+            )
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(new JwtTokenFilter(jwtTokenProvider), 
+                UsernamePasswordAuthenticationFilter.class)
+            .build();
     }
 
     @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    public AuthenticationManager authenticationManager() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return new ProviderManager(authProvider);
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-            .cors().and()
-            .csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeRequests()
-                .antMatchers("/auth/**").permitAll()
-                .antMatchers("/api-docs/**", "/swagger-ui/**").permitAll()
-                .anyRequest().authenticated()
-            .and()
-            .addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+        return source;
     }
 }

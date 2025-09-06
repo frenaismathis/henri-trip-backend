@@ -1,7 +1,7 @@
 # -------------------------------
 # Build stage
 # -------------------------------
-FROM maven:3.9.1-eclipse-temurin-20 AS build
+FROM maven:3.9.1-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
@@ -10,15 +10,16 @@ COPY pom.xml .
 
 # Copy source code and build the jar
 COPY src ./src
-RUN mvn clean package -DskipTests
+RUN mvn -B clean package -DskipTests
 
 # -------------------------------
 # Runtime stage
 # -------------------------------
-FROM eclipse-temurin:20-jdk
+FROM eclipse-temurin:17-jdk
 
-# Install postgresql-client
-RUN apt-get update && apt-get install -y postgresql-client
+# Install postgresql-client (use --no-install-recommends and cleanup)
+RUN apt-get update && apt-get install -y --no-install-recommends postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 

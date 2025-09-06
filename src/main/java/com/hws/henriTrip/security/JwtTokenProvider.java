@@ -1,4 +1,4 @@
-package com.hws.henriTrip.security;
+package com.hws.henritrip.security;
 
 import io.jsonwebtoken.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
