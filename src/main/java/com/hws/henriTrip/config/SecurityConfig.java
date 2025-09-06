@@ -2,6 +2,7 @@ package com.hws.henritrip.config;
 
 import com.hws.henritrip.security.JwtTokenFilter;
 import com.hws.henritrip.security.JwtTokenProvider;
+import com.hws.henritrip.security.RoleName;
 import com.hws.henritrip.security.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,12 +53,19 @@ public class SecurityConfig {
                 .accessDeniedHandler(new CustomAccessDeniedHandler())
             )
             .authorizeHttpRequests(auth -> auth
+                // public endpoints
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+
+                // role-based rules using enum constants
+                .requestMatchers("/api/admin/**").hasRole(RoleName.ADMIN.name())
+                .requestMatchers("/api/user/**").hasAnyRole(RoleName.USER.name(), RoleName.ADMIN.name())
+
+                // fallback: authenticated for all other endpoints
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(new JwtTokenFilter(jwtTokenProvider), 
+            .addFilterBefore(new JwtTokenFilter(jwtTokenProvider),
                 UsernamePasswordAuthenticationFilter.class)
             .build();
     }
@@ -77,7 +85,7 @@ public class SecurityConfig {
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
