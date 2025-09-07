@@ -1,6 +1,7 @@
 package com.hws.henritrip.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -12,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Activity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne
@@ -23,6 +24,7 @@ public class Activity {
     private int dayNumber;
 
     @Column(nullable = false)
+    @Min(value = 1, message = "orderInDay must be greater than 0")
     private int orderInDay;
 
     @Column(nullable = false)

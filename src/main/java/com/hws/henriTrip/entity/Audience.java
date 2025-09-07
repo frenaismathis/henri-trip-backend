@@ -11,7 +11,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Audience {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(unique = true, nullable = false)

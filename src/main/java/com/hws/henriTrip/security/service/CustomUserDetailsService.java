@@ -1,6 +1,5 @@
 package com.hws.henritrip.security.service;
 
-import com.hws.henritrip.entity.User;
 import com.hws.henritrip.repository.UserRepository;
 import com.hws.henritrip.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +16,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        var user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
         return new UserPrincipal(user);
     }
 }
