@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Season {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(unique = true, nullable = false)

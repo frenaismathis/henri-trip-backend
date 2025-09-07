@@ -1,6 +1,7 @@
 package com.hws.henritrip.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Guide {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
@@ -23,6 +24,7 @@ public class Guide {
     private String description;
 
     @Column(nullable = false)
+    @Min(value = 1, message = "daysCount must be greater than 0")
     private int daysCount;
 
     @ManyToOne
@@ -30,27 +32,15 @@ public class Guide {
     private User createdBy;
 
     @ManyToMany
-    @JoinTable(
-        name = "guide_mobility",
-        joinColumns = @JoinColumn(name = "guide_id"),
-        inverseJoinColumns = @JoinColumn(name = "mobility_id")
-    )
+    @JoinTable(name = "guide_mobility", joinColumns = @JoinColumn(name = "guide_id"), inverseJoinColumns = @JoinColumn(name = "mobility_id"))
     private Set<Mobility> mobilityOptions;
 
     @ManyToMany
-    @JoinTable(
-        name = "guide_season",
-        joinColumns = @JoinColumn(name = "guide_id"),
-        inverseJoinColumns = @JoinColumn(name = "season_id")
-    )
+    @JoinTable(name = "guide_season", joinColumns = @JoinColumn(name = "guide_id"), inverseJoinColumns = @JoinColumn(name = "season_id"))
     private Set<Season> seasons;
 
     @ManyToMany
-    @JoinTable(
-        name = "guide_audience",
-        joinColumns = @JoinColumn(name = "guide_id"),
-        inverseJoinColumns = @JoinColumn(name = "audience_id")
-    )
+    @JoinTable(name = "guide_audience", joinColumns = @JoinColumn(name = "guide_id"), inverseJoinColumns = @JoinColumn(name = "audience_id"))
     private Set<Audience> audiences;
 
     @OneToMany(mappedBy = "guide", cascade = CascadeType.ALL, orphanRemoval = true)

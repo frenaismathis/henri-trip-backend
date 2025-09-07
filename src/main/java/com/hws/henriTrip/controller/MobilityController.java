@@ -1,0 +1,30 @@
+package com.hws.henritrip.controller;
+
+import com.hws.henritrip.dto.MobilityDTO;
+import com.hws.henritrip.service.MobilityService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/admin/mobilities")
+@RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
+public class MobilityController {
+
+    private final MobilityService mobilityService;
+
+    @GetMapping
+    public ResponseEntity<List<MobilityDTO>> getAllMobilities() {
+        return ResponseEntity.ok(mobilityService.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MobilityDTO> getMobility(@PathVariable UUID id) {
+        return ResponseEntity.ok(mobilityService.findById(id));
+    }
+}

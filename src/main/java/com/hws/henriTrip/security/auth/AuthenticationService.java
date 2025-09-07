@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,21 +20,21 @@ public class AuthenticationService {
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                request.getEmail(),
-                request.getPassword()
-            )
-        );
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()));
 
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        String role = userPrincipal.getAuthorities().iterator().next().getAuthority();
-
+        String role = userPrincipal.getAuthorities().stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElse("ROLE_USER");
         String token = jwtTokenProvider.createToken(userPrincipal.getEmail(), role);
 
         return AuthenticationResponse.builder()
-            .token(token)
-            .email(request.getEmail())
-            .role(role)
-            .build();
+                .token(token)
+                .email(request.getEmail())
+                .role(role)
+                .build();
     }
 }
