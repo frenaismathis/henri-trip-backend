@@ -98,6 +98,24 @@ Run with Docker Compose :
 docker-compose up
 ```
 
+Stop with Docker Compose :
+
+```bash
+docker-compose down
+```
+
+Stop and delete volumes with Docker Compose :
+
+```bash
+docker-compose down -v
+```
+
+Build and create containers in detached mode with Docker Compose :
+
+```bash
+docker-compose up --build -d
+```
+
 ---
 
 ## Database Migrations
@@ -116,23 +134,87 @@ Pour lancer manuellement :
 
 ### Authentication
 
-- `POST /api/auth/login` – Returns JWT token
+- **POST** `/api/auth/login` – Authenticate and return JWT token
 
-### Users (Admin)
+---
 
-- `GET /api/admin/users`
-- `GET /api/admin/users/{id}`
-- `POST /api/admin/users`
-- `PUT /api/admin/users/{id}`
-- `DELETE /api/admin/users/{id}`
+### Users
 
-### Guides, Activities, Audiences, Seasons, Mobilities
+- **GET** `/api/users` _(Admin only)_ – List all users
+- **GET** `/api/users/{userId}` _(Admin only)_ – Get user by ID
+- **POST** `/api/users` _(Admin only)_ – Create user
+- **PUT** `/api/users/{userId}` _(Admin only)_ – Update user
+- **DELETE** `/api/users/{userId}` _(Admin only)_ – Delete user
+- **GET** `/api/users/me` _(User/Admin)_ – Get current logged-in user
 
-- `GET /api/admin/{entity}`
-- `GET /api/admin/{entity}/{id}`
-- `POST /api/admin/{entity}`
-- `PUT /api/admin/{entity}/{id}`
-- `DELETE /api/admin/{entity}/{id}`
+---
+
+### Guides
+
+- **GET** `/api/guides/visible/{userId}` _(User/Admin)_ – List guides visible to a user
+- **GET** `/api/guides/{guideId}/forUser/{userId}` _(User/Admin)_ – Get guide details for a specific user
+- **GET** `/api/admin/guides` _(Admin only)_ – List all guides
+- **GET** `/api/admin/guides/{guideId}` _(Admin only)_ – Get guide by ID
+- **POST** `/api/admin/guides?creatorUserId={creatorUserId}` _(Admin only)_ – Create a guide
+- **PUT** `/api/admin/guides/{guideId}` _(Admin only)_ – Update a guide
+- **DELETE** `/api/admin/guides/{guideId}` _(Admin only)_ – Delete a guide
+
+---
+
+### Activities
+
+- **GET** `/api/guides/{guideId}/activities?dayNumber={dayNumber}` _(User/Admin)_ – List activities for a guide (optionally filtered by day)
+- **POST** `/api/admin/guides/{guideId}/activities` _(Admin only)_ – Create an activity for a guide
+- **PUT** `/api/admin/guides/{guideId}/activities/{activityId}` _(Admin only)_ – Update an activity
+- **DELETE** `/api/admin/guides/{guideId}/activities/{activityId}` _(Admin only)_ – Delete an activity
+
+---
+
+### Access (Admin)
+
+- **GET** `/api/admin/guides/{guideId}/access` – List users with access to a guide
+- **POST** `/api/admin/guides/{guideId}/access` – Grant access to a user for a guide
+- **DELETE** `/api/admin/guides/{guideId}/access/{userId}` – Revoke a user’s access
+
+---
+
+### Audiences (Admin)
+
+- **GET** `/api/admin/audiences` – List all audiences
+- **GET** `/api/admin/audiences/{id}` – Get audience by ID
+- **POST** `/api/admin/audiences` – Create a new audience
+- **PUT** `/api/admin/audiences/{id}` – Update an audience
+- **DELETE** `/api/admin/audiences/{id}` – Delete an audience
+
+---
+
+### Seasons (Admin)
+
+- **GET** `/api/admin/seasons` – List all seasons
+- **GET** `/api/admin/seasons/{id}` – Get season by ID
+- **POST** `/api/admin/seasons` – Create a new season
+- **PUT** `/api/admin/seasons/{id}` – Update a season
+- **DELETE** `/api/admin/seasons/{id}` – Delete a season
+
+---
+
+### Mobilities (Admin)
+
+- **GET** `/api/admin/mobilities` – List all mobilities
+- **GET** `/api/admin/mobilities/{id}` – Get mobility by ID
+- **POST** `/api/admin/mobilities` – Create a new mobility
+- **PUT** `/api/admin/mobilities/{id}` – Update a mobility
+- **DELETE** `/api/admin/mobilities/{id}` – Delete a mobility
+
+---
+
+### Roles (Admin)
+
+- **GET** `/api/admin/roles` – List all roles
+- **GET** `/api/admin/roles/{roleId}` – Get role by ID
+- **POST** `/api/admin/roles` – Create a new role
+- **PUT** `/api/admin/roles/{roleId}` – Update a role
+- **DELETE** `/api/admin/roles/{roleId}` – Delete a role
 
 ---
 
