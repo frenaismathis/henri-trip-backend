@@ -1,0 +1,424 @@
+{
+  "info": {
+    "name": "HenriTrip API",
+    "_postman_id": "b1e2c3d4-e5f6-7890-ab12-34cd56ef7890",
+    "description": "Collection Postman pour tester l'API HenriTrip (Users, Guides, Activities, Access, Auth)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8080" },
+    { "key": "admin_token", "value": "" },
+    { "key": "user_token", "value": "" },
+    { "key": "guideId", "value": "" },
+    { "key": "activityId", "value": "" },
+    { "key": "userId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Access Controller",
+      "item": [
+        {
+          "name": "Get Users With Access",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/admin/guides/{{guideId}}/access"
+          }
+        },
+        {
+          "name": "Grant Access",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/admin/guides/{{guideId}}/access",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"userId\": \"{{userId}}\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Revoke Access",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/admin/guides/{{guideId}}/access/{{userId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Activity Controller",
+      "item": [
+        {
+          "name": "List Activities For Guide",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/guides/{{guideId}}/activities?dayNumber={{dayNumber}}"
+          }
+        },
+        {
+          "name": "Create Activity",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/admin/guides/{{guideId}}/activities",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"title\": \"Visite\", \"dayNumber\": 1 }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Update Activity",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/admin/guides/{{guideId}}/activities/{{activityId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"title\": \"Visite modifiée\", \"dayNumber\": 2 }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete Activity",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/admin/guides/{{guideId}}/activities/{{activityId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audience Controller",
+      "item": [
+        {
+          "name": "Get All Audiences",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/admin/audiences"
+          }
+        },
+        {
+          "name": "Get Audience",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/admin/audiences/{{id}}"
+          }
+        },
+        {
+          "name": "Create Audience",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/admin/audiences",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Jeunes\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Update Audience",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/admin/audiences/{{id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Adultes\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete Audience",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/admin/audiences/{{id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Guide Controller",
+      "item": [
+        {
+          "name": "Get Guides Visible To User",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/guides/visible/{{userId}}"
+          }
+        },
+        {
+          "name": "Get Guide For User",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/guides/{{guideId}}/forUser/{{userId}}"
+          }
+        },
+        {
+          "name": "Get Guide By Id (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/admin/guides/{{guideId}}"
+          }
+        },
+        {
+          "name": "Get All Guides (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/admin/guides"
+          }
+        },
+        {
+          "name": "Create Guide",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/admin/guides?creatorUserId={{creatorUserId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"title\": \"Circuit Historique\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Update Guide",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/admin/guides/{{guideId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"title\": \"Saveurs locales\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete Guide",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/admin/guides/{{guideId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mobility Controller",
+      "item": [
+        {
+          "name": "Get All Mobilities",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/admin/mobilities"
+          }
+        },
+        {
+          "name": "Get Mobility",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/admin/mobilities/{{id}}"
+          }
+        },
+        {
+          "name": "Create Mobility",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/admin/mobilities",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Transport public\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Update Mobility",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/admin/mobilities/{{id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Location vélo\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete Mobility",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/admin/mobilities/{{id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Role Controller",
+      "item": [
+        {
+          "name": "List Roles",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/admin/roles"
+          }
+        },
+        {
+          "name": "Get Role",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/admin/roles/{{roleId}}"
+          }
+        },
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/admin/roles",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"ADMIN\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Update Role",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/admin/roles/{{roleId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"USER\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete Role",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/admin/roles/{{roleId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Season Controller",
+      "item": [
+        {
+          "name": "Get All Seasons",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/admin/seasons"
+          }
+        },
+        {
+          "name": "Get Season",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/admin/seasons/{{id}}"
+          }
+        },
+        {
+          "name": "Create Season",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/admin/seasons",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Hiver\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Update Season",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/admin/seasons/{{id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"Été\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete Season",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/admin/seasons/{{id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Controller",
+      "item": [
+        {
+          "name": "List Users",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/users" }
+        },
+        {
+          "name": "Get User",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/users/{{userId}}"
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/users",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"firstname\": \"John\", \"lastname\": \"Doe\", \"email\": \"john@example.com\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/users/{{userId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"firstname\": \"Jane\", \"lastname\": \"Doe\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/users/{{userId}}"
+          }
+        },
+        {
+          "name": "Get Current User (me)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/users/me" }
+        }
+      ]
+    },
+    {
+      "name": "Authentication Controller",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"email\": \"john.doe@example.com\", \"password\": \"password\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
