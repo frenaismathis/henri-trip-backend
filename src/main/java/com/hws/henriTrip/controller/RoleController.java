@@ -27,4 +27,20 @@ public class RoleController {
     public ResponseEntity<RoleDTO> getRole(@PathVariable UUID roleId) {
         return ResponseEntity.ok(roleService.findById(roleId));
     }
+
+    @PostMapping
+    public ResponseEntity<RoleDTO> createRole(@RequestBody RoleDTO dto) {
+        return ResponseEntity.ok(roleService.create(dto));
+    }
+
+    @PutMapping("/{roleId}")
+    public ResponseEntity<RoleDTO> updateRole(@PathVariable UUID roleId, @RequestBody RoleDTO dto) {
+        return ResponseEntity.ok(roleService.update(roleId, dto));
+    }
+
+    @DeleteMapping("/{roleId}")
+    public ResponseEntity<Void> deleteRole(@PathVariable UUID roleId) {
+        roleService.delete(roleId);
+        return ResponseEntity.noContent().build();
+    }
 }

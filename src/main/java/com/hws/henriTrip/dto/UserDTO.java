@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-/**
- * DTO to expose/create/update a user (password is not exposed).
- */
 @Data
 @Builder
 @NoArgsConstructor
@@ -34,5 +31,4 @@ public class UserDTO {
     @Email(message = "Invalid email format")
     private String email;
 
-    // Note: password intentionally omitted from standard DTO responses.
 }

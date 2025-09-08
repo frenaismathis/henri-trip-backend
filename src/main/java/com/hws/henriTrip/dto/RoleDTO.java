@@ -13,5 +13,5 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RoleDTO {
     private UUID id;
-    private String name; // ex: "ADMIN", "USER"
+    private String name;
 }

@@ -11,10 +11,6 @@ import lombok.NoArgsConstructor;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * Request DTO used to create or update a guide.
- * Frontend must send relation IDs (UUIDs) for mobility, seasons, audiences.
- */
 @Data
 @Builder
 @NoArgsConstructor

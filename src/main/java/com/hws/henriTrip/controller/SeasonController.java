@@ -27,4 +27,20 @@ public class SeasonController {
     public ResponseEntity<SeasonDTO> getSeason(@PathVariable UUID id) {
         return ResponseEntity.ok(seasonService.findById(id));
     }
+
+    @PostMapping
+    public ResponseEntity<SeasonDTO> createSeason(@RequestBody SeasonDTO dto) {
+        return ResponseEntity.ok(seasonService.create(dto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<SeasonDTO> updateSeason(@PathVariable UUID id, @RequestBody SeasonDTO dto) {
+        return ResponseEntity.ok(seasonService.update(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSeason(@PathVariable UUID id) {
+        seasonService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

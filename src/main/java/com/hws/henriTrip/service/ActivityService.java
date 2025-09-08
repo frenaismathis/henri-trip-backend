@@ -17,9 +17,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -30,11 +30,6 @@ public class ActivityService {
     private final GuideRepository guideRepository;
     private final UserRepository userRepository;
 
-    /**
-     * Récupère les activités pour un guide et un utilisateur donné.
-     * Si dayNumber != null, filtre sur ce jour.
-     * Tri automatique par dayNumber puis orderInDay.
-     */
     public List<ActivityDTO> findByGuideIdForUser(UUID guideId, UUID requestingUserId, Integer dayNumber) {
         User user = userRepository.findById(requestingUserId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -42,46 +37,36 @@ public class ActivityService {
         Guide guide = guideRepository.findById(guideId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Guide not found"));
 
-        boolean userIsAdmin = user.getRole() != null &&
+        boolean isAdmin = user.getRole() != null &&
                 RoleName.ADMIN.name().equalsIgnoreCase(user.getRole().getName());
+        boolean hasAccess = isAdmin ||
+                guide.getUsers().stream().anyMatch(u -> u.getId().equals(requestingUserId));
 
-        boolean userHasAccess = userIsAdmin || (guide.getUsers() != null &&
-                guide.getUsers().stream().anyMatch(u -> u.getId().equals(requestingUserId)));
-
-        if (!userHasAccess) {
+        if (!hasAccess) {
             throw new AccessDeniedException("User does not have access to this guide");
         }
 
-        Stream<Activity> activityStream = activityRepository.findByGuide_IdOrderByDayNumberAscOrderInDayAsc(guideId)
-                .stream();
+        Stream<Activity> activityStream = guide.getActivities().stream()
+                .sorted(Comparator
+                        .comparingInt(Activity::getDayNumber)
+                        .thenComparingInt(Activity::getOrderInDay));
+
         if (dayNumber != null) {
             activityStream = activityStream.filter(a -> a.getDayNumber() == dayNumber);
         }
 
-        return activityStream
-                .map(ActivityMapper::toDto)
-                .collect(Collectors.toList());
+        return activityStream.map(ActivityMapper::toDto).toList();
     }
 
     @Transactional
     public ActivityDTO createForGuide(UUID guideId, ActivityCreateRequest request) {
         Guide guide = guideRepository.findById(guideId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Guide not found: " + guideId));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Guide not found: " + guideId));
 
         Activity activity = new Activity();
         activity.setGuide(guide);
-        activity.setDayNumber(request.getDayNumber());
 
-        ActivityMapper.updateEntity(activity, ActivityDTO.builder()
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .category(request.getCategory())
-                .address(request.getAddress())
-                .phone(request.getPhone())
-                .openingHours(request.getOpeningHours())
-                .website(request.getWebsite())
-                .orderInDay(request.getOrderInDay())
-                .build());
+        ActivityMapper.updateEntity(activity, request);
 
         return ActivityMapper.toDto(activityRepository.save(activity));
     }
@@ -95,18 +80,7 @@ public class ActivityService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Activity does not belong to this guide");
         }
 
-        ActivityMapper.updateEntity(activity, ActivityDTO.builder()
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .category(request.getCategory())
-                .address(request.getAddress())
-                .phone(request.getPhone())
-                .openingHours(request.getOpeningHours())
-                .website(request.getWebsite())
-                .orderInDay(request.getOrderInDay())
-                .build());
-
-        activity.setDayNumber(request.getDayNumber());
+        ActivityMapper.updateEntity(activity, request);
 
         return ActivityMapper.toDto(activityRepository.save(activity));
     }

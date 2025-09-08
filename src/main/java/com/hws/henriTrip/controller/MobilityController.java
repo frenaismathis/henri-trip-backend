@@ -27,4 +27,20 @@ public class MobilityController {
     public ResponseEntity<MobilityDTO> getMobility(@PathVariable UUID id) {
         return ResponseEntity.ok(mobilityService.findById(id));
     }
+
+    @PostMapping
+    public ResponseEntity<MobilityDTO> createMobility(@RequestBody MobilityDTO dto) {
+        return ResponseEntity.ok(mobilityService.create(dto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MobilityDTO> updateMobility(@PathVariable UUID id, @RequestBody MobilityDTO dto) {
+        return ResponseEntity.ok(mobilityService.update(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMobility(@PathVariable UUID id) {
+        mobilityService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

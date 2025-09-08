@@ -7,9 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO used to create an activity associated to a guide.
- */
 @Data
 @Builder
 @NoArgsConstructor

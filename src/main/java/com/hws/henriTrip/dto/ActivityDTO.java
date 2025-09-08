@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-/**
- * DTO to transfer Activity data.
- */
 @Data
 @Builder
 @NoArgsConstructor
@@ -37,6 +34,10 @@ public class ActivityDTO {
     private String openingHours;
 
     private String website;
+
+    @NotNull(message = "Day number is required")
+    @Min(value = 1, message = "Day number must be at least 1")
+    private int dayNumber;
 
     @Min(value = 1, message = "Order in day must be at least 1")
     private int orderInDay;

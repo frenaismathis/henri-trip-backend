@@ -13,19 +13,26 @@ public class GuideMapper {
     public static GuideDTO toDto(Guide guide) {
         if (guide == null)
             return null;
+
         return GuideDTO.builder()
                 .id(guide.getId())
                 .title(guide.getTitle())
                 .description(guide.getDescription())
                 .daysCount(guide.getDaysCount())
-                .mobilityOptionIds(guide.getMobilityOptions() != null
-                        ? guide.getMobilityOptions().stream().map(m -> m.getId()).collect(Collectors.toSet())
+                .mobilityOptions(guide.getMobilityOptions() != null
+                        ? guide.getMobilityOptions().stream()
+                                .map(m -> m.getName())
+                                .collect(Collectors.toSet())
                         : java.util.Set.of())
-                .seasonIds(guide.getSeasons() != null
-                        ? guide.getSeasons().stream().map(s -> s.getId()).collect(Collectors.toSet())
+                .seasons(guide.getSeasons() != null
+                        ? guide.getSeasons().stream()
+                                .map(s -> s.getName())
+                                .collect(Collectors.toSet())
                         : java.util.Set.of())
-                .audienceIds(guide.getAudiences() != null
-                        ? guide.getAudiences().stream().map(a -> a.getId()).collect(Collectors.toSet())
+                .audiences(guide.getAudiences() != null
+                        ? guide.getAudiences().stream()
+                                .map(a -> a.getName())
+                                .collect(Collectors.toSet())
                         : java.util.Set.of())
                 .build();
     }
