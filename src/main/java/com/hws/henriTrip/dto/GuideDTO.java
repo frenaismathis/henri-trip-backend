@@ -11,9 +11,6 @@ import lombok.NoArgsConstructor;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * DTO to transfer Guide data. Relations are represented by their IDs.
- */
 @Data
 @Builder
 @NoArgsConstructor
@@ -25,26 +22,15 @@ public class GuideDTO {
     @NotBlank(message = "Title is required")
     private String title;
 
+    @NotBlank(message = "Description is required")
     private String description;
 
     @Min(value = 1, message = "Days count must be at least 1")
     private int daysCount;
 
-    /**
-     * Mobility option IDs (e.g. UUIDs referencing Mobility entities).
-     */
-    @NotNull(message = "Mobility option ids are required")
-    private Set<@NotNull(message = "Mobility id cannot be null") UUID> mobilityOptionIds;
+    private Set<String> mobilityOptions;
 
-    /**
-     * Season IDs (UUIDs referencing Season entities).
-     */
-    @NotNull(message = "Season ids are required")
-    private Set<@NotNull(message = "Season id cannot be null") UUID> seasonIds;
+    private Set<String> seasons;
 
-    /**
-     * Audience IDs (UUIDs referencing Audience entities).
-     */
-    @NotNull(message = "Audience ids are required")
-    private Set<@NotNull(message = "Audience id cannot be null") UUID> audienceIds;
+    private Set<String> audiences;
 }

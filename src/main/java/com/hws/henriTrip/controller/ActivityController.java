@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class ActivityController {
 
     private final ActivityService activityService;
 
-    @GetMapping("/api/guides/{guideId}/activities")
+    @GetMapping("/guides/{guideId}/activities")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<List<ActivityDTO>> listActivitiesForGuide(
             @PathVariable UUID guideId,
@@ -30,12 +30,14 @@ public class ActivityController {
             @AuthenticationPrincipal UserPrincipal userPrincipal) {
 
         List<ActivityDTO> activities = activityService.findByGuideIdForUser(
-                guideId, userPrincipal.getUser().getId(), dayNumber);
+                guideId,
+                userPrincipal.getUser().getId(),
+                dayNumber);
 
         return ResponseEntity.ok(activities);
     }
 
-    @PostMapping("/api/admin/guides/{guideId}/activities")
+    @PostMapping("/admin/guides/{guideId}/activities")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ActivityDTO> createActivityForGuide(
             @PathVariable UUID guideId,
@@ -44,11 +46,10 @@ public class ActivityController {
         ActivityDTO createdActivity = activityService.createForGuide(guideId, createRequest);
 
         return ResponseEntity.created(
-                URI.create("/api/guides/" + guideId + "/activities/" + createdActivity.getId()))
-                .body(createdActivity);
+                URI.create("/api/guides/" + guideId + "/activities/" + createdActivity.getId())).body(createdActivity);
     }
 
-    @PutMapping("/api/admin/guides/{guideId}/activities/{activityId}")
+    @PutMapping("/admin/guides/{guideId}/activities/{activityId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ActivityDTO> updateActivityForGuide(
             @PathVariable UUID guideId,
@@ -60,7 +61,7 @@ public class ActivityController {
         return ResponseEntity.ok(updatedActivity);
     }
 
-    @DeleteMapping("/api/admin/guides/{guideId}/activities/{activityId}")
+    @DeleteMapping("/admin/guides/{guideId}/activities/{activityId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteActivityForGuide(
             @PathVariable UUID guideId,

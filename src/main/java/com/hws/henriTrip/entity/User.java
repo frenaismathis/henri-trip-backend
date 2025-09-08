@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -31,12 +32,23 @@ public class User {
     private Role role;
 
     @ManyToMany
-    @JoinTable(
-        name = "guide_user_access",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "guide_id")
-    )
-    private Set<Guide> guides;
+    @JoinTable(name = "guide_user_access", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "guide_id"))
+    private Set<Guide> guides = new HashSet<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof User))
+            return false;
+        User user = (User) o;
+        return id != null && id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31;
+    }
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

@@ -9,10 +9,6 @@ import lombok.NoArgsConstructor;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * DTO to manage access permissions for a guide.
- * - userIdsAllowed: explicit user ids allowed
- */
 @Data
 @Builder
 @NoArgsConstructor
