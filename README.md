@@ -1,6 +1,10 @@
 # HenriTrip Backend
 
-Backend for the HenriTrip application, built with **Spring Boot 3**, **Java 17**, **PostgreSQL**, **Flyway**, and **JWT authentication**.
+Java Spring Boot Backend Development for a Fullstack Web Project with an Application-Oriented Focus, Close to Professional Contexts.
+
+## Description
+
+Implementation of REST APIs to manage travel guides. Data modeling and SQL management, applying development best practices for maintainability and scalability. Easily integrable with an Angular frontend.
 
 ---
 
