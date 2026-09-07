@@ -61,7 +61,7 @@ Implementation of REST APIs to manage travel guides. Data modeling and SQL manag
 ### Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/henri-trip-backend.git
+git clone https://github.com/frenaismathis/henri-trip-backend.git
 cd henri-trip-backend
 ```
 
