@@ -54,9 +54,9 @@ Implementation of REST APIs to manage travel guides. Data modeling and SQL manag
 ### Prerequisites
 
 - Java 17+
-- Maven (ou Gradle)
+- Maven (or Gradle)
 - PostgreSQL database
-- Docker (optionnel, pour setup rapide)
+- Docker (optional, for quick setup)
 
 ### Clone the repository
 
