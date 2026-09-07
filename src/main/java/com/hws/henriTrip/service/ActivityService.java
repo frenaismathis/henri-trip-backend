@@ -58,6 +58,32 @@ public class ActivityService {
         return activityStream.map(ActivityMapper::toDto).toList();
     }
 
+    public ActivityDTO findByIdForUser(UUID guideId, UUID activityId, UUID requestingUserId) {
+        User user = userRepository.findById(requestingUserId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        Guide guide = guideRepository.findById(guideId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Guide not found"));
+
+        boolean isAdmin = user.getRole() != null &&
+                RoleName.ADMIN.name().equalsIgnoreCase(user.getRole().getName());
+        boolean hasAccess = isAdmin ||
+                guide.getUsers().stream().anyMatch(u -> u.getId().equals(requestingUserId));
+
+        if (!hasAccess) {
+            throw new AccessDeniedException("User does not have access to this guide");
+        }
+
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Activity not found"));
+
+        if (!activity.getGuide().getId().equals(guideId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Activity does not belong to this guide");
+        }
+
+        return ActivityMapper.toDto(activity);
+    }
+
     @Transactional
     public ActivityDTO createForGuide(UUID guideId, ActivityCreateRequest request) {
         Guide guide = guideRepository.findById(guideId)
