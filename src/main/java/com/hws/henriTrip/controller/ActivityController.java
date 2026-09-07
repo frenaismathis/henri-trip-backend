@@ -37,6 +37,21 @@ public class ActivityController {
         return ResponseEntity.ok(activities);
     }
 
+    @GetMapping("/guides/{guideId}/activities/{activityId}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<ActivityDTO> getActivityById(
+            @PathVariable UUID guideId,
+            @PathVariable UUID activityId,
+            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        ActivityDTO activity = activityService.findByIdForUser(
+                guideId,
+                activityId,
+                userPrincipal.getUser().getId());
+
+        return ResponseEntity.ok(activity);
+    }
+
     @PostMapping("/admin/guides/{guideId}/activities")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ActivityDTO> createActivityForGuide(
